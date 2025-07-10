@@ -125,9 +125,6 @@ const HomeScreen: React.FC = () => {
             >
               <Text style={styles.actionIcon}>📚</Text>
               <Text style={styles.actionTitle}>Browse Lessons</Text>
-              <Text style={styles.actionDescription}>
-                Explore all available lessons
-              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -137,9 +134,6 @@ const HomeScreen: React.FC = () => {
             >
               <Text style={styles.actionIcon}>📊</Text>
               <Text style={styles.actionTitle}>View Progress</Text>
-              <Text style={styles.actionDescription}>
-                Check your learning stats
-              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -149,9 +143,6 @@ const HomeScreen: React.FC = () => {
             >
               <Text style={styles.actionIcon}>⚙️</Text>
               <Text style={styles.actionTitle}>Settings</Text>
-              <Text style={styles.actionDescription}>
-                Customize your experience
-              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -161,9 +152,6 @@ const HomeScreen: React.FC = () => {
             >
               <Text style={styles.actionIcon}>👤</Text>
               <Text style={styles.actionTitle}>Profile</Text>
-              <Text style={styles.actionDescription}>
-                Manage your account
-              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -310,6 +298,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 100,
     ...SHADOWS.sm,
+    paddingHorizontal: SPACING.sm,
   },
   actionIcon: {
     fontSize: 28,
@@ -323,7 +312,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   actionDescription: {
-    fontSize: TYPOGRAPHY.fontSize.xs,
+    fontSize: TYPOGRAPHY.fontSize.base,
+    marginTop: SPACING.xs,
     color: COLORS.text.secondary,
     textAlign: 'center',
     lineHeight: TYPOGRAPHY.lineHeight.normal,
