@@ -8,26 +8,77 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, RouteProp, useRoute } from '@react-navigation/native';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../../utils/constants';
-
-const mockQuestion = {
-  image: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg', // placeholder banana
-  prompt: 'Select the word for "केला"',
-  options: ['अक्क्षी', 'हे', 'के', 'केला'],
-  correct: 3,
-};
+import { lessonsMockData } from '../../services/api/lessonsMockData';
+import { RootStackParamList } from '../../utils/types';
 
 const QuizScreen: React.FC = () => {
   const navigation = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamList, 'Quiz'>>();
+  const { lessonId } = route.params || {};
+
+  // Find the lesson and its quiz
+  const lesson = lessonsMockData.find(l => l.id === lessonId);
+  const quiz = lesson?.quiz || [];
+
+  const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
+
+  if (!lesson) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.cardPrompt}>Quiz not found.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const currentQ = quiz[current];
 
   const handleSelect = (idx: number) => {
     setSelected(idx);
     setAnswered(true);
-    // In a real app, show feedback and go to next question
+    if (idx === currentQ.correctOptionIndex) {
+      setScore(s => s + 1);
+    }
   };
+
+  const handleNext = () => {
+    if (current < quiz.length - 1) {
+      setCurrent(c => c + 1);
+      setSelected(null);
+      setAnswered(false);
+    } else {
+      setShowSummary(true);
+    }
+  };
+
+  if (showSummary) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={COLORS.background.primary} />
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.goBack()}>
+            <Text style={styles.headerIconText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{lesson.title} Quiz</Text>
+          <View style={styles.headerIcon} />
+        </View>
+        <View style={styles.cardWrapper}>
+          <View style={styles.card}>
+            <Text style={styles.cardPrompt}>Quiz Complete!</Text>
+            <Text style={styles.cardPrompt}>Score: {score} / {quiz.length}</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.optionText}>Back to Lessons</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,30 +88,23 @@ const QuizScreen: React.FC = () => {
         <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.goBack()}>
           <Text style={styles.headerIconText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Hindi Quiz</Text>
-        <TouchableOpacity style={styles.headerIcon}>
-          <Text style={styles.headerIconText}>★</Text>
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{lesson.title} Quiz</Text>
+        <View style={styles.headerIcon} />
       </View>
       {/* Card */}
       <View style={styles.cardWrapper}>
         <View style={styles.card}>
-          <Image
-            source={{ uri: mockQuestion.image }}
-            style={styles.cardImage}
-            resizeMode="contain"
-          />
-          <Text style={styles.cardPrompt}>{mockQuestion.prompt}</Text>
+          <Text style={styles.cardPrompt}>{currentQ.question}</Text>
         </View>
       </View>
       {/* Options */}
       <View style={styles.optionsWrapper}>
-        {mockQuestion.options.map((option, idx) => (
+        {currentQ.options.map((option, idx) => (
           <TouchableOpacity
             key={option}
             style={[
               styles.optionButton,
-              selected === idx && (idx === mockQuestion.correct
+              selected === idx && (idx === currentQ.correctOptionIndex
                 ? styles.optionButtonCorrect
                 : styles.optionButtonWrong),
             ]}
@@ -71,6 +115,11 @@ const QuizScreen: React.FC = () => {
             <Text style={styles.optionText}>{option}</Text>
           </TouchableOpacity>
         ))}
+        {answered && (
+          <TouchableOpacity style={styles.optionButton} onPress={handleNext}>
+            <Text style={styles.optionText}>{current < quiz.length - 1 ? 'Next' : 'Finish'}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );

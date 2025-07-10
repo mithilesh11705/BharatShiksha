@@ -7,12 +7,19 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Switch,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import Slider from '@react-native-community/slider';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
+import { setShowHindiEquivalents, setSpeechRate, setSpeechPitch, setAudioEnabled } from '../../store/slices/settingsSlice';
+import { updateUserLanguage } from '../../store/slices/userSlice';
+import { Picker } from '@react-native-picker/picker';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../../utils/constants';
 
 const SettingsScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const settings = useSelector((state: RootState) => state.settings);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   return (
@@ -36,12 +43,19 @@ const SettingsScreen: React.FC = () => {
           </View>
           <View style={styles.settingCard}>
             <Text style={styles.settingLabel}>Language</Text>
-            <Text style={styles.settingValue}>
-              {currentUser?.selectedLanguage === 'hi-IN' ? 'हिंदी (Hindi)' : 
-               currentUser?.selectedLanguage === 'ta-IN' ? 'தமிழ் (Tamil)' :
-               currentUser?.selectedLanguage === 'mr-IN' ? 'मराठी (Marathi)' :
-               currentUser?.selectedLanguage === 'bn-IN' ? 'বাংলা (Bengali)' : 'Hindi'}
-            </Text>
+            <View style={{ flex: 1 }}>
+              <Picker
+                selectedValue={currentUser?.selectedLanguage}
+                onValueChange={v => dispatch(updateUserLanguage(v))}
+                style={{ width: '100%' }}
+                itemStyle={{ fontSize: 16 }}
+              >
+                <Picker.Item label="हिंदी (Hindi)" value="hi-IN" />
+                <Picker.Item label="தமிழ் (Tamil)" value="ta-IN" />
+                <Picker.Item label="मराठी (Marathi)" value="mr-IN" />
+                <Picker.Item label="বাংলা (Bengali)" value="bn-IN" />
+              </Picker>
+            </View>
           </View>
         </View>
 
@@ -93,6 +107,49 @@ const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* BharatShiksha Settings */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>BharatShiksha Settings</Text>
+          <View style={styles.settingCard}>
+            <Text style={styles.settingLabel}>Show Hindi Equivalents</Text>
+            <Switch
+              value={settings.showHindiEquivalents}
+              onValueChange={v => dispatch(setShowHindiEquivalents(v))}
+            />
+          </View>
+          <View style={styles.settingCard}>
+            <Text style={styles.settingLabel}>Audio Enabled</Text>
+            <Switch
+              value={settings.audioEnabled}
+              onValueChange={v => dispatch(setAudioEnabled(v))}
+            />
+          </View>
+          <View style={styles.settingCard}>
+            <Text style={styles.settingLabel}>Speech Rate</Text>
+            <Slider
+              style={{ width: 120 }}
+              minimumValue={0.5}
+              maximumValue={1.5}
+              step={0.05}
+              value={settings.speechRate}
+              onValueChange={v => dispatch(setSpeechRate(v))}
+            />
+            <Text style={styles.settingValue}>{settings.speechRate.toFixed(2)}</Text>
+          </View>
+          <View style={styles.settingCard}>
+            <Text style={styles.settingLabel}>Speech Pitch</Text>
+            <Slider
+              style={{ width: 120 }}
+              minimumValue={0.5}
+              maximumValue={2.0}
+              step={0.05}
+              value={settings.speechPitch}
+              onValueChange={v => dispatch(setSpeechPitch(v))}
+            />
+            <Text style={styles.settingValue}>{settings.speechPitch.toFixed(2)}</Text>
+          </View>
+        </View>
+
         {/* About */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
@@ -130,24 +187,37 @@ const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background.primary,
+    backgroundColor: COLORS.background.gradient, // Use gradient background
   },
   header: {
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.xl,
     paddingBottom: SPACING.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    backgroundColor: COLORS.background.glass,
+    ...SHADOWS.glass,
+    borderRadius: BORDER_RADIUS.xl,
+    marginBottom: SPACING.xl,
+    alignItems: 'center',
   },
   title: {
     fontSize: TYPOGRAPHY.fontSize['3xl'],
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.xs,
+    fontWeight: '700',
+    color: COLORS.primary.blue,
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    letterSpacing: 1.2,
+    textShadowColor: COLORS.glassShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    color: COLORS.text.secondary,
+    fontSize: TYPOGRAPHY.fontSize.lg,
+    color: COLORS.primary.purple,
+    fontWeight: '600',
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
+    marginBottom: SPACING.sm,
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
@@ -157,10 +227,12 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   sectionTitle: {
-    fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text.primary,
+    fontSize: TYPOGRAPHY.fontSize.lg,
+    fontWeight: '700',
+    color: COLORS.primary.purple,
     marginBottom: SPACING.lg,
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    letterSpacing: 0.2,
   },
   settingCard: {
     backgroundColor: COLORS.background.secondary,

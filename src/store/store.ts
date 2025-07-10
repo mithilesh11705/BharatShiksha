@@ -6,6 +6,7 @@ import lessonSlice from './slices/lessonSlice';
 import progressSlice from './slices/progressSlice';
 import audioSlice from './slices/audioSlice';
 import quizSlice from './slices/quizSlice';
+import settingsSlice from './slices/settingsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     progress: progressSlice,
     audio: audioSlice,
     quiz: quizSlice,
+    settings: settingsSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Dimensions,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from '../../store/store';
 import { RootStackParamList } from '../../utils/types';
-import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../../utils/constants';
+import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS, GLASS } from '../../utils/constants';
 import { fetchLessons } from '../../store/slices/lessonSlice';
 import { fetchLearningInsights } from '../../store/slices/progressSlice';
 import { getLanguageNativeName } from '../../utils/helpers';
@@ -48,6 +49,8 @@ const HomeScreen: React.FC = () => {
     // Navigate to lessons tab
     // This would be handled by the tab navigator
   };
+
+  const isMobile = Dimensions.get('window').width < 400;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,36 +120,33 @@ const HomeScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           
-          <View style={styles.actionsGrid}>
+          <View style={[styles.actionsGrid, isMobile && styles.actionsGridMobile]}>
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, isMobile && styles.actionCardMobile]}
               onPress={handleViewLessons}
               activeOpacity={0.8}
             >
               <Text style={styles.actionIcon}>📚</Text>
               <Text style={styles.actionTitle}>Browse Lessons</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, isMobile && styles.actionCardMobile]}
               onPress={handleViewProgress}
               activeOpacity={0.8}
             >
               <Text style={styles.actionIcon}>📊</Text>
               <Text style={styles.actionTitle}>View Progress</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, isMobile && styles.actionCardMobile]}
               onPress={() => navigation.navigate('Settings')}
               activeOpacity={0.8}
             >
               <Text style={styles.actionIcon}>⚙️</Text>
               <Text style={styles.actionTitle}>Settings</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, isMobile && styles.actionCardMobile]}
               onPress={() => navigation.navigate('Profile')}
               activeOpacity={0.8}
             >
@@ -186,173 +186,234 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background.primary,
+    backgroundColor: COLORS.background.gradient, // Use gradient background
   },
   scrollView: {
     flex: 1,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING['2xl'], // add bottom padding for mobile
   },
   header: {
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
+    backgroundColor: COLORS.background.glass,
+    ...SHADOWS.glass,
+    borderRadius: BORDER_RADIUS.xl,
+    marginBottom: SPACING.xl,
+    alignItems: 'center',
   },
   greeting: {
-    fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.text.primary,
+    fontSize: TYPOGRAPHY.fontSize['3xl'],
+    fontWeight: '700',
+    color: COLORS.primary.blue,
     marginBottom: SPACING.xs,
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    letterSpacing: 1.2,
+    textShadowColor: COLORS.glassShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    color: COLORS.text.secondary,
+    fontSize: TYPOGRAPHY.fontSize.lg,
+    color: COLORS.primary.purple,
+    fontWeight: '600',
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
+    marginBottom: SPACING.sm,
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
   statsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: SPACING.md,
-    marginBottom: SPACING.lg,
+    justifyContent: 'space-between',
+    marginBottom: SPACING.xl,
+    gap: SPACING.md,
   },
   statCard: {
-    flex: 1,
-    backgroundColor: COLORS.background.secondary,
+    ...GLASS,
+    ...SHADOWS.card,
     borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.sm,
-    marginHorizontal: SPACING.xs,
+    flex: 1,
     alignItems: 'center',
-    ...SHADOWS.sm,
+    paddingVertical: SPACING.lg,
+    marginHorizontal: SPACING.xs,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    backdropFilter: 'blur(12px)',
   },
   statNumber: {
-    fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
+    fontSize: TYPOGRAPHY.fontSize['2xl'],
     color: COLORS.primary.blue,
+    fontWeight: '700',
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
     marginBottom: SPACING.xs,
   },
   statLabel: {
     fontSize: TYPOGRAPHY.fontSize.sm,
     color: COLORS.text.secondary,
-    textAlign: 'center',
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
   },
   section: {
-    paddingHorizontal: SPACING.md,
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING['2xl'],
+    paddingBottom: SPACING.md,
   },
   sectionTitle: {
     fontSize: TYPOGRAPHY.fontSize.lg,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.md,
+    fontWeight: '700',
+    color: COLORS.primary.purple,
+    marginBottom: SPACING.lg,
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    letterSpacing: 0.2,
   },
   continueCard: {
-    backgroundColor: COLORS.background.card,
-    borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.md,
+    ...GLASS,
+    ...SHADOWS.card,
+    borderRadius: BORDER_RADIUS.xl,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    padding: SPACING.xl,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
-    minHeight: 80,
-    ...SHADOWS.md,
+    marginBottom: SPACING.lg,
+    backdropFilter: 'blur(16px)',
   },
   continueContent: {
     flex: 1,
   },
   continueTitle: {
-    fontSize: TYPOGRAPHY.fontSize.lg,
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
+    fontSize: TYPOGRAPHY.fontSize.xl,
     color: COLORS.primary.blue,
+    fontWeight: '700',
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
     marginBottom: SPACING.xs,
-    flexShrink: 1,
   },
   continueSubtitle: {
     fontSize: TYPOGRAPHY.fontSize.base,
-    color: COLORS.primary.blue,
-    marginBottom: SPACING.xs,
+    color: COLORS.text.secondary,
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
+    marginBottom: SPACING.sm,
   },
   continueDescription: {
     fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.text.secondary,
+    color: COLORS.text.glass,
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
   },
   continueIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.primary.blue,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.primary.purple,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: SPACING.sm,
+    marginLeft: SPACING.md,
+    ...SHADOWS.glass,
   },
   continueIconText: {
-    fontSize: 20,
+    fontSize: 28,
+    color: COLORS.text.inverse,
+    fontWeight: '700',
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
   },
   actionsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    width: '100%',
+    maxWidth: '100%',
+    alignSelf: 'center',
+    gap: SPACING.lg,
+  },
+  actionsGridMobile: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    width: '100%',
+    maxWidth: '100%',
+    alignSelf: 'center',
+    gap: SPACING.lg,
   },
   actionCard: {
-    width: '48%',
-    backgroundColor: COLORS.background.secondary,
+    ...GLASS,
+    ...SHADOWS.card,
     borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
+    flex: 1,
+    minWidth: 0,
     alignItems: 'center',
-    minHeight: 100,
-    ...SHADOWS.sm,
-    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING['2xl'],
+    marginBottom: SPACING.lg,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    marginHorizontal: SPACING.sm,
+    opacity: 0.96,
+    maxWidth: '100%',
+  },
+  actionCardMobile: {
+    width: '48%',
+    minWidth: 140,
+    marginHorizontal: SPACING.sm,
+    marginBottom: SPACING.lg,
+    paddingVertical: SPACING['2xl'],
+    flexBasis: '48%',
+    flexGrow: 1,
+    maxWidth: '48%',
   },
   actionIcon: {
-    fontSize: 28,
-    marginBottom: SPACING.xs,
+    fontSize: 32,
+    marginBottom: SPACING.sm,
   },
   actionTitle: {
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.xs,
-    textAlign: 'center',
-  },
-  actionDescription: {
     fontSize: TYPOGRAPHY.fontSize.base,
-    marginTop: SPACING.xs,
-    color: COLORS.text.secondary,
-    textAlign: 'center',
-    lineHeight: TYPOGRAPHY.lineHeight.normal,
+    color: COLORS.primary.purple,
+    fontWeight: '600',
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
   },
   goalCard: {
-    backgroundColor: COLORS.background.card,
-    borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.md,
-    borderWidth: 1,
+    ...GLASS,
+    ...SHADOWS.card,
+    borderRadius: BORDER_RADIUS.xl,
+    alignItems: 'center',
+    padding: SPACING.xl,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
-    ...SHADOWS.md,
+    marginBottom: SPACING['2xl'], // bring up from bottom
+    backdropFilter: 'blur(12px)',
   },
   goalTitle: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.sm,
+    fontSize: TYPOGRAPHY.fontSize.lg,
+    color: COLORS.primary.blue,
+    fontWeight: '700',
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    marginBottom: SPACING.xs,
   },
   goalTarget: {
     fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary.blue,
-    marginBottom: SPACING.md,
+    color: COLORS.primary.purple,
+    fontWeight: '700',
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
+    marginBottom: SPACING.sm,
   },
   goalProgress: {
-    height: 8,
-    backgroundColor: COLORS.border,
-    borderRadius: 4,
+    width: '100%',
+    height: 10,
+    backgroundColor: COLORS.background.card,
+    borderRadius: 8,
     marginBottom: SPACING.sm,
+    overflow: 'hidden',
   },
   goalProgressBar: {
     height: '100%',
     backgroundColor: COLORS.primary.green,
-    borderRadius: 4,
-    boxShadow: '0 2px 12px rgba(34,34,34,0.08)',
+    borderRadius: 8,
   },
   goalStatus: {
     fontSize: TYPOGRAPHY.fontSize.sm,
     color: COLORS.text.secondary,
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
   },
   loadingContainer: {
     padding: SPACING.xl,

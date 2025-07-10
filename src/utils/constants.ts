@@ -32,28 +32,50 @@ export const APP_CONFIG = {
 
 export const COLORS = {
   background: {
-    primary: '#FAF7F2', // Cream
-    card: '#FFF',
+    primary: 'rgba(245, 247, 250, 0.85)', // Glassy white
+    card: 'rgba(255, 255, 255, 0.65)', // Glass card
+    gradient: 'linear-gradient(135deg, #e0e7ff 0%, #f5f7fa 100%)',
+    glass: 'rgba(255,255,255,0.25)',
   },
   primary: {
-    orange: '#E4572E',
-    green: '#4CA866',
+    orange: '#FF7E5F', // Vibrant orange
+    green: '#43E97B', // Neon green
+    blue: '#3B6CB7', // Deep blue
+    purple: '#7F53AC', // Accent purple
+    pink: '#FF6A88', // Accent pink
+  },
+  accent: {
+    neon: '#43E97B',
     blue: '#3B6CB7',
+    purple: '#7F53AC',
+    pink: '#FF6A88',
   },
   text: {
-    primary: '#222',
-    secondary: '#555',
+    primary: '#1A1A2E',
+    secondary: '#555E7B',
     inverse: '#FFF',
+    glass: 'rgba(26,26,46,0.7)',
   },
-  border: '#E5E5E5',
-  shadow: 'rgba(34, 34, 34, 0.08)',
+  border: 'rgba(255,255,255,0.35)',
+  shadow: 'rgba(34, 34, 34, 0.10)',
+  glassShadow: 'rgba(31, 38, 135, 0.15)',
+};
+
+export const GLASS = {
+  backgroundColor: COLORS.background.glass,
+  borderColor: COLORS.border,
+  borderWidth: 1,
+  borderRadius: 24,
+  overflow: 'visible', // changed from 'hidden' to 'visible' for RN compatibility
+  // For web: backdropFilter: 'blur(16px)',
+  // For native: use expo-blur or similar
 };
 
 export const TYPOGRAPHY = {
   fontFamily: {
-    regular: 'System',
-    medium: 'System',
-    bold: 'System',
+    regular: 'Inter', // Suggest Inter or Poppins for modern look
+    medium: 'Inter',
+    bold: 'Inter',
   },
   fontSize: {
     xs: getResponsiveSize(12, 13, 14),
@@ -89,20 +111,27 @@ export const SPACING = {
 };
 
 export const BORDER_RADIUS = {
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  sm: 12,
+  md: 20,
+  lg: 32,
+  xl: 48,
   full: 9999,
 };
 
 export const SHADOWS = {
   card: {
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: COLORS.glassShadow,
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 1,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  glass: {
+    shadowColor: COLORS.glassShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 24,
+    elevation: 8,
   },
 };
 
